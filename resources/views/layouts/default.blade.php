@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title', 'laravel demo')</title>
-    <link rel="stylesheet" href="/css/app.css?v=1.4">
+    <link rel="stylesheet" href="/css/app.css?v=1.5">
 </head>
 <body>
     @include('layouts._header')
@@ -17,5 +17,7 @@
             @include('layouts._footer')
         </div>
     </div>
+
+    <script src="/js/app.js"></script>
 </body>
 </html>
