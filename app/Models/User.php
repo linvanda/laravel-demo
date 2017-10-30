@@ -37,9 +37,55 @@ class User extends Authenticatable
         });
     }
 
+    /**
+     * 关注
+     *
+     * @param $userIds
+     */
+    public function follow($userIds)
+    {
+        $this->following()->sync($userIds, false);
+    }
+
+    /**
+     * 取消关注
+     *
+     * @param $userIds
+     */
+    public function unfollow($userIds)
+    {
+        $this->following()->detach($userIds);
+    }
+
+    public function isFollowing($userId)
+    {
+        return $this->following()->allRelatedIds()->contains($userId);
+    }
+
+    /**
+     * 动态列表
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function statuses()
     {
         return $this->hasMany(Status::class);
+    }
+
+    /**
+     * 粉丝列表
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+    }
+
+    /**
+     * 关注人列表
+     */
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
     }
 
     public function avatar($size = 100)
@@ -49,8 +95,15 @@ class User extends Authenticatable
         return "http://www.gravatar.com/avatar/$hash?s=$size";
     }
 
-    public function feed()
+    /**
+     * 动态列表，包括当前用户以及其关注的用户的动态
+     *
+     */
+    public function feeds()
     {
-        return $this->statuses()->orderByDesc('created_at');
+        $userIds = $this->following->pluck('id')->toArray();
+        $userIds[] = $this->id;
+
+        return Status::whereIn('user_id', $userIds)->with('user')->orderByDesc('created_at');
     }
 }

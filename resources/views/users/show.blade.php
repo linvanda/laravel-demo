@@ -13,6 +13,10 @@
             </div>
             {{--微博动态列表--}}
             <div class="col-md-12">
+                @if (Auth::check())
+                    @include('users._follow_form', ['user' => $user])
+                @endif
+
                 @if (count($statuses) > 0)
                     <ol class="statuses">
                         @foreach ($statuses as $status)

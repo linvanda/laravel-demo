@@ -104,6 +104,34 @@ class UsersController extends Controller
         return back();
     }
 
+    /**
+     * 粉丝列表
+     *
+     * @param User $user
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function followers(User $user)
+    {
+        $users = $user->followers()->paginate(10);
+        $title = '粉丝列表';
+
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+    /**
+     * 关注的人列表
+     *
+     * @param User $user
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function followings(User $user)
+    {
+        $users = $user->following()->paginate(10);
+        $title = '关注的人列表';
+
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
     public function confirmEmail($token)
     {
         $user = User::where('activation_token', $token)->firstOrFail();
