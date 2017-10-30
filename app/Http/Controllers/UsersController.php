@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth', [
-            'except' => ['index', 'show', 'create', 'store']
+            'except' => ['index', 'show', 'create', 'store', 'confirmEmail']
         ]);
 
         $this->middleware('guest', ['only' => ['create']]);
@@ -53,10 +55,9 @@ class UsersController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        // 注册后自动登录
-        Auth::login($user);
+        $this->sendEmailConfirmation($user);
 
-        session()->flash('success', '恭喜你，注册成功！');
+        session()->flash('success', '验证邮件已发送到你的注册邮箱上，请注意查收。');
 
         return redirect()->route('users.show', $user);
     }
@@ -99,5 +100,32 @@ class UsersController extends Controller
         session()->flash('success', '删除成功！');
 
         return back();
+    }
+
+    public function confirmEmail($token)
+    {
+        $user = User::where('activation_token', $token)->firstOrFail();
+        $user->activated = true;
+        $user->activation_token = null;
+        $user->save();
+
+        Auth::login($user);
+
+        session()->flash('success', '恭喜你，激活成功！');
+
+        return redirect()->intended(route('users.show', $user));
+    }
+
+    protected function sendEmailConfirmation(User $user)
+    {
+        $from = '1049180458@qq.com';
+        $fName = 'linvanda';
+        $to = $user->email;
+        $data = compact('user');
+        $subject = '账号激活通知';
+
+        Mail::send('emails.confirm', $data, function (Message $message) use ($from, $fName, $to, $subject) {
+            $message->from($from, $fName)->to($to)->subject($subject);
+        });
     }
 }

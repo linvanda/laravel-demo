@@ -20,6 +20,7 @@ class UsersTableSeeder extends Seeder
             'name' => 'linvanda',
             'email' => 'test@test.com',
             'password' => bcrypt('123'),
+            'activated' => true,
             'is_admin' => true
         ]);
     }
