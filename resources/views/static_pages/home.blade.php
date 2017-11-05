@@ -1,6 +1,7 @@
 @extends('layouts.default')
 @section('title', 'home page one')
 @section('content')
+
     @if(Auth::check())
         <div class="row">
             <div class="col-md-8">
@@ -26,11 +27,12 @@
                 你现在所看到的是 <a href="https://fsdhub.com/books/laravel-essential-training-5.1">Laravel 入门教程</a> 的示例项目主页。
             </p>
             <p>
-                一切，将从这里开始。
+                一切，将从这里开始。哈哈哈哈哦哦哦哦
             </p>
             <p>
                 <a class="btn btn-lg btn-success" href="{{ route('users.create') }}" role="button">现在注册</a>
             </p>
         </div>
     @endif
+    <example></example>
 @stop

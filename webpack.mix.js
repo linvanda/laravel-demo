@@ -12,4 +12,18 @@ let mix = require('laravel-mix');
  */
 
 mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+    .extract(['vue'])
+    .sass('resources/assets/sass/app.scss', 'public/css')
+    .version()
+    .webpackConfig({
+        // 自定义webpack的配置
+    });
+
+if (!mix.inProduction) {
+    // 生成资源映射
+    mix.sourceMaps();
+}
+
+// 禁用系统通知
+mix.disableNotifications();
+

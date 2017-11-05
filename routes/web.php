@@ -12,9 +12,9 @@
 */
 
 // 静态资源
-Route::get('/', 'StaticPagesController@home')->name('home');
-Route::get('/help', 'StaticPagesController@help')->name('help');
-Route::get('/about', 'StaticPagesController@about')->name('about');
+Route::view('/', 'static_pages.home')->name('home');
+Route::view('about', 'static_pages.about')->name('about');
+Route::view('help', 'static_pages.help')->name('help');
 
 // 用户
 Route::resource('users', 'UsersController');
@@ -42,3 +42,8 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('passw
 
 // 微博
 Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
+
+// 测试专用
+Route::resource('tests', 'TestUsersController');
+
+Route::view('passport', 'passport.clients');
