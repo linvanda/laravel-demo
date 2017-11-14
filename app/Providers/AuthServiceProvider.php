@@ -30,6 +30,10 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        // 授权路由注册
         Passport::routes();
+
+        // 启动隐式授权
+        Passport::enableImplicitGrant();
     }
 }

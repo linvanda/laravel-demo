@@ -32580,7 +32580,7 @@ var render = function() {
           },
           [
             _c("span", [
-              _vm._v("\n                    OAuth Clients\n                ")
+              _vm._v("\n                    OAuth账号\n                ")
             ]),
             _vm._v(" "),
             _c(
@@ -32589,11 +32589,7 @@ var render = function() {
                 staticClass: "action-link",
                 on: { click: _vm.showCreateClientForm }
               },
-              [
-                _vm._v(
-                  "\n                    Create New Client\n                "
-                )
-              ]
+              [_vm._v("\n                    创建新账号\n                ")]
             )
           ]
         )
@@ -32602,9 +32598,7 @@ var render = function() {
       _c("div", { staticClass: "panel-body" }, [
         _vm.clients.length === 0
           ? _c("p", { staticClass: "m-b-none" }, [
-              _vm._v(
-                "\n                You have not created any OAuth clients.\n            "
-              )
+              _vm._v("\n                你还没有创建任何OAuth账号\n            ")
             ])
           : _vm._e(),
         _vm._v(" "),

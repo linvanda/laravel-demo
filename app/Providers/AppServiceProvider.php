@@ -17,6 +17,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Carbon::setLocale('zh');
         \View::share('share_var', 'abcd');
+
+        if (env('APP_DEBUG')) {
+            // 监听数据库查询事件
+            \DB::listen(function ($query) {
+                \Log::info("sql info: {$query->sql} -- {$query->time}");
+            });
+        }
     }
 
     /**

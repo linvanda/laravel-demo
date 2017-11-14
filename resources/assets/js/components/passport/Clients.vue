@@ -14,11 +14,11 @@
             <div class="panel-heading">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span>
-                        OAuth Clients
+                        OAuth账号
                     </span>
 
                     <a class="action-link" @click="showCreateClientForm">
-                        Create New Client
+                        创建新账号
                     </a>
                 </div>
             </div>
@@ -26,7 +26,7 @@
             <div class="panel-body">
                 <!-- Current Clients -->
                 <p class="m-b-none" v-if="clients.length === 0">
-                    You have not created any OAuth clients.
+                    你还没有创建任何OAuth账号
                 </p>
 
                 <table class="table table-borderless m-b-none" v-if="clients.length > 0">

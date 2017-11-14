@@ -2,13 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use TCG\Voyager\Models\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -28,6 +30,12 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
     public static function boot()
     {
         parent::boot();
@@ -36,6 +44,43 @@ class User extends Authenticatable
         static::creating(function ($user) {
             $user->activation_token = str_random(30);
         });
+
+        // 全局作用域
+        static::addGlobalScope('activated', function (Builder $builder) {
+            return $builder->where('activated', 1);
+        });
+    }
+
+    /**
+     * 访问器
+     *
+     * @param $value
+     * @return string
+     */
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = ucfirst($value);
+    }
+
+    /**
+     * 本地作用域
+     *
+     * @param Builder $builder
+     * @return $this
+     */
+    public static function scopeAdmin(Builder $builder)
+    {
+        return $builder->where('is_admin', 1);
+    }
+
+    public static function scopeOfName(Builder $builder, $name)
+    {
+        return $builder->where('name', $name);
     }
 
     /**
@@ -78,7 +123,8 @@ class User extends Authenticatable
      */
     public function followers()
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')
+            ->withPivot(['id'])->withTimestamps()->wherePivot('id', '<', 59);
     }
 
     /**
@@ -106,5 +152,10 @@ class User extends Authenticatable
         $userIds[] = $this->id;
 
         return Status::whereIn('user_id', $userIds)->with('user')->orderByDesc('created_at');
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
     }
 }

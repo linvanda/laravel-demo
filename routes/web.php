@@ -45,5 +45,61 @@ Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy'
 
 // 测试专用
 Route::resource('tests', 'TestUsersController');
-
+// api授权 oauth2.0
 Route::view('passport', 'passport.clients');
+Route::get('redirect/{appid}', function ($appid) {
+    // 获取auth code
+    $query = http_build_query([
+        'client_id' => $appid,
+        'redirect_uri' => 'http://www.linvanda.com/passport/callback',
+        'response_type' => 'code',
+        'scope' => '',
+    ]);
+
+    return redirect('oauth/authorize?' . $query);
+});
+Route::get('passport/callback', function (\Illuminate\Http\Request $request) {
+    // 通过auth code获取access_token
+    $http = new GuzzleHttp\Client();
+    $response = $http->post('http://www.linvanda.com/oauth/token', [
+        'form_params' => [
+            'grant_type' => 'authorization_code',
+            'client_id' => '4',
+            'client_secret' => 'voHzaXd4Y3UsU1nvmegqFe4b9G5zRc5VjZjWI0AM',
+            'redirect_uri' => 'http://www.linvanda.com/passport/callback',
+            'code' => $request->code,
+        ]
+    ]);
+
+    return json_decode((string) $response->getBody(), true);
+});
+
+// 密码授权
+Route::get('passport/password', function () {
+    $http = new GuzzleHttp\Client();
+
+    $response = $http->post('http://www.linvanda.com/oauth/token', [
+        'form_params' => [
+            'grant_type' => 'password',
+            'client_id' => '5',
+            'client_secret' => 'jwoPAdzEEH7eE2xueIKtm9jvrVBCRYD5uMfCj1Zq',
+            'username' => 'test@test.com',
+            'password' => '123',
+            'scope' => '',
+        ],
+    ]);
+
+    return json_decode((string) $response->getBody(), true);
+});
+
+Route::get('test', function () {
+     $users = \App\Models\User::first();
+
+     $res = new \App\Http\Resources\User($users);
+
+     return gettype($res);
+});
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});
